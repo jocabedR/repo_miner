@@ -1,0 +1,292 @@
+openapi: 3.0.3
+info:
+  title: repominer - OpenAPI 3.0
+  version: 1.0.11
+
+tags:
+  - name: repos
+    description: Everything about Repositories
+  - name: user
+    description: Operations about Users
+paths:
+  /repos:
+    get:
+      tags:
+        - repos
+      summary: Returns a list of analyzed / to be analyzed repositories.
+      description: Returns a map of status codes to quantities
+      operationId: getAlizedRepos
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReposGet'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReposGet'
+      #security:
+      #  - api_key: []
+    post:
+      tags:
+        - repos
+      summary: Request repository analysis.
+      description: Request repository analysis.
+      operationId: postRepo
+      parameters:
+        - name: repoID
+          in: path
+          description: ID of a Reporitory to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReposGet'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReposGet'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Respository not found
+  /repos/{repoID}:
+    get:
+      tags:
+        - repos
+      summary: Consult analysis of a repository
+      description: Consult analysis of a repository
+      operationId: getRepoById
+      parameters:
+        - name: repoID
+          in: path
+          description: ID of a Reporitory to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReposGet'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReposGet'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Respository not found
+    put:
+      tags:
+        - repos
+      summary: Request a new analysis of a repository that has already been analyzed.
+      description: Request a new analysis of a repository that has already been analyzed.
+      operationId: putRepoById
+      parameters:
+        - name: repoID
+          in: path
+          description: ID of a Reporitory to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReposGet'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReposGet'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Respository not found
+            
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /user/{username}:
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      description: ''
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+
+
+components:
+  schemas:
+    ReposGet:
+      type: object
+      properties:
+        user:
+          type: string
+          example: Jocabed Ríos
+        provide:
+          type: string
+          example: GitHub
+        username:
+          type: string
+          example: jokisPokis
+        repo:
+          type: string
+          example: repo_miner
+        status:
+          description: Order Repository
+          example: ready
+          enum:
+            - ready
+            - pending
+            - error
+        actions:
+          type: array
+          items:
+            type: string
+          example: [show, Analyze Again!, Delete]
+      xml:
+        name: resposGet
+
+    
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: Jocabed Ríos
+        username:
+          type: string
+          example: jokisPokis
+        email:
+          type: string
+          example: jocabed.rios@bunsan.io
+        rol:
+          type: array
+          items:
+            type: string
+          example: [admin, colaborator]
+      xml:
+        name: user
+        
+#  securitySchemes:
+#    repo_miner_auth:
+#      type: oauth2
+#      flows:
+#        implicit:
+#          authorizationUrl:
+#          scopes:
+#            write:
+#            read:
+#    api_key:
+#      type: apiKey
+#      name: api_key
+#      in: header
